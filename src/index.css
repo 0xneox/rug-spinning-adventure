@@ -69,7 +69,10 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    background-image: radial-gradient(circle at center, rgba(15, 23, 42, 0.5) 0%, rgba(3, 7, 18, 1) 100%);
+    background-image: 
+      radial-gradient(circle at 20% 30%, rgba(25, 33, 52, 0.8) 0%, rgba(3, 7, 18, 0) 70%),
+      radial-gradient(circle at 80% 70%, rgba(35, 43, 72, 0.8) 0%, rgba(3, 7, 18, 0) 70%),
+      radial-gradient(circle at center, rgba(15, 23, 42, 0.5) 0%, rgba(3, 7, 18, 1) 100%);
     background-attachment: fixed;
   }
 
@@ -85,11 +88,40 @@
   ::-webkit-scrollbar-thumb {
     @apply bg-muted rounded-full;
   }
+  
+  /* Modern perspective for 3D effects */
+  .perspective-500 {
+    perspective: 500px;
+  }
+  
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
 }
 
 @layer components {
   .glassmorphism {
     @apply bg-card/40 backdrop-blur-md border border-white/5 shadow-xl;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .glassmorphism::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom right,
+      rgba(255, 255, 255, 0.03),
+      rgba(255, 255, 255, 0.01),
+      rgba(255, 255, 255, 0)
+    );
+    pointer-events: none;
+    z-index: 1;
   }
   
   .text-gradient {
@@ -129,6 +161,73 @@
   .animate-float {
     animation: float 3s ease-in-out infinite;
   }
+  
+  /* New 2025 effects */
+  .text-shimmer {
+    background: linear-gradient(
+      to right,
+      var(--foreground) 0%,
+      #D4AF37 20%,
+      var(--foreground) 40%
+    );
+    background-size: 200% auto;
+    background-clip: text;
+    text-fill-color: transparent;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 4s linear infinite;
+  }
+  
+  /* Ambient background glow */
+  .ambient-glow {
+    position: relative;
+  }
+  
+  .ambient-glow::after {
+    content: '';
+    position: absolute;
+    inset: -50px;
+    background: radial-gradient(
+      circle,
+      rgba(212, 175, 55, 0.2) 0%,
+      rgba(212, 175, 55, 0) 70%
+    );
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 1s ease;
+  }
+  
+  .ambient-glow:hover::after {
+    opacity: 1;
+  }
+  
+  /* Holographic effect */
+  .holographic {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .holographic::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      45deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 30%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.1) 70%,
+      transparent 100%
+    );
+    background-size: 200% 200%;
+    opacity: 0;
+    animation: hologram 6s linear infinite;
+    transition: opacity 0.3s ease;
+  }
+  
+  .holographic:hover::before {
+    opacity: 1;
+  }
 
   @keyframes pulse-subtle {
     0%, 100% {
@@ -157,6 +256,21 @@
     }
     to {
       transform: rotate(360deg);
+    }
+  }
+  
+  @keyframes shimmer {
+    to {
+      background-position: 200% center;
+    }
+  }
+  
+  @keyframes hologram {
+    0% {
+      background-position: 0% 0%;
+    }
+    100% {
+      background-position: 200% 200%;
     }
   }
 }
