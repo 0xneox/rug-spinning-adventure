@@ -6,7 +6,7 @@ import Pot from '../components/Pot';
 import BetButton from '../components/BetButton';
 import WinnersList from '../components/WinnersList';
 import GameRules from '../components/GameRules';
-import { toast } from '@/components/ui/sonner';
+import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 
 const Index = () => {
