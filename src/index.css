@@ -76,9 +76,10 @@
     background-attachment: fixed;
   }
 
-  /* Custom Scrollbar */
+  /* Improved Custom Scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
+    height: 6px;
   }
 
   ::-webkit-scrollbar-track {
@@ -86,7 +87,11 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-muted rounded-full;
+    @apply bg-muted rounded-full transition-all duration-300;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-roulette-gold/40;
   }
   
   /* Modern perspective for 3D effects */
@@ -98,8 +103,22 @@
     perspective: 1000px;
   }
   
+  .perspective-2000 {
+    perspective: 2000px;
+  }
+  
   .preserve-3d {
     transform-style: preserve-3d;
+  }
+  
+  /* Text selection styling */
+  ::selection {
+    @apply bg-roulette-gold/30 text-white;
+  }
+  
+  /* Focus styles for accessibility */
+  :focus-visible {
+    @apply outline-none ring-2 ring-roulette-gold/70 ring-offset-2 ring-offset-background transition-shadow duration-200;
   }
 }
 
@@ -124,8 +143,54 @@
     z-index: 1;
   }
   
+  /* Enhanced 2025 glassmorphism with deeper 3D effect */
+  .glassmorphism-2025 {
+    @apply bg-card/30 backdrop-blur-xl border border-white/8 shadow-2xl;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+      0 10px 30px rgba(0, 0, 0, 0.2),
+      0 2px 4px rgba(255, 255, 255, 0.05) inset;
+    transform-style: preserve-3d;
+  }
+  
+  .glassmorphism-2025::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom right,
+      rgba(255, 255, 255, 0.05),
+      rgba(255, 255, 255, 0.02),
+      rgba(255, 255, 255, 0)
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+  
+  .glassmorphism-2025::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at 50% 50%,
+      transparent 85%,
+      rgba(212, 175, 55, 0.15) 100%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+  
   .text-gradient {
     @apply text-transparent bg-clip-text bg-gradient-to-r from-roulette-gold to-yellow-500;
+  }
+  
+  /* New premium text gradient */
+  .text-gradient-premium {
+    @apply text-transparent bg-clip-text;
+    background-image: linear-gradient(to right, #D4AF37 20%, #FFF3A3 40%, #D4AF37 60%, #FFF3A3 80%);
+    background-size: 200% auto;
+    animation: shine 8s linear infinite;
   }
   
   .button-glow {
@@ -162,7 +227,7 @@
     animation: float 3s ease-in-out infinite;
   }
   
-  /* New 2025 effects */
+  /* Enhanced 2025 effects */
   .text-shimmer {
     background: linear-gradient(
       to right,
@@ -178,7 +243,7 @@
     animation: shimmer 4s linear infinite;
   }
   
-  /* Ambient background glow */
+  /* Ambient background glow with enhanced effect */
   .ambient-glow {
     position: relative;
   }
@@ -201,7 +266,7 @@
     opacity: 1;
   }
   
-  /* Holographic effect */
+  /* Enhanced holographic effect */
   .holographic {
     position: relative;
     overflow: hidden;
@@ -227,6 +292,66 @@
   
   .holographic:hover::before {
     opacity: 1;
+  }
+  
+  /* New 2025 spatial UI effect */
+  .spatial-element {
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.3s ease;
+  }
+  
+  .spatial-element:hover {
+    transform: translateZ(20px);
+  }
+  
+  /* New 2025 neural glow effect */
+  .neural-glow {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .neural-glow::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at var(--x, 50%) var(--y, 50%),
+      rgba(212, 175, 55, 0.3) 0%,
+      transparent 50%
+    );
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: 1;
+    pointer-events: none;
+  }
+  
+  .neural-glow:hover::before {
+    opacity: 1;
+  }
+  
+  /* New 2025 liquid animation effect */
+  .liquid-animation {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .liquid-animation::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      transparent 50%,
+      rgba(212, 175, 55, 0.1) 51%,
+      rgba(212, 175, 55, 0.2) 100%
+    );
+    transform: translateY(100%);
+    transition: transform 0.5s ease;
+  }
+  
+  .liquid-animation:hover::after {
+    transform: translateY(0);
   }
 
   @keyframes pulse-subtle {
@@ -271,6 +396,38 @@
     }
     100% {
       background-position: 200% 200%;
+    }
+  }
+  
+  /* New 2025 animations */
+  @keyframes shine {
+    to {
+      background-position: 200% center;
+    }
+  }
+  
+  @keyframes magnetic-glow {
+    0% {
+      box-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+    }
+    100% {
+      box-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
+    }
+  }
+  
+  /* Improved accessibility animations that respect user preferences */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-float,
+    .animate-pulse-subtle,
+    .spin-slow,
+    .spin-fast,
+    .text-shimmer,
+    .holographic::before {
+      animation: none !important;
+      transition: none !important;
     }
   }
 }
