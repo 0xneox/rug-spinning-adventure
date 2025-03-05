@@ -6,6 +6,11 @@ import Pot from '../components/Pot';
 import BetButton from '../components/BetButton';
 import WinnersList from '../components/WinnersList';
 import GameRules from '../components/GameRules';
+import ReferralSystem from '../components/ReferralSystem';
+import Rewards from '../components/Rewards';
+import TokenUtility from '../components/TokenUtility';
+import LiveStats from '../components/LiveStats';
+import MobileAppPromo from '../components/MobileAppPromo';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 
@@ -59,6 +64,18 @@ const Index = () => {
     
     return () => clearInterval(timer);
   }, [isSpinning]);
+
+  // Check for referral when component mounts
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const refCode = params.get('ref');
+    
+    if (refCode) {
+      // Store referral info in local storage
+      localStorage.setItem('referredBy', refCode);
+      toast.success(`Referral detected! You'll get a free spin after your first bet.`);
+    }
+  }, []);
   
   // Handle bet
   const handleBet = () => {
@@ -72,6 +89,15 @@ const Index = () => {
     
     // For demo, add 0.1 SOL to the pot (minus 5% fee)
     setPot((prev) => prev + 0.095);
+
+    // Check if user is placing their first bet and was referred
+    const isFirstBet = !localStorage.getItem('firstBetPlaced');
+    const referredBy = localStorage.getItem('referredBy');
+    
+    if (isFirstBet && referredBy) {
+      toast.success(`Your referrer ${referredBy.slice(0, 8)}... earned a reward!`);
+      localStorage.setItem('firstBetPlaced', 'true');
+    }
   };
   
   // Handle spin completion
@@ -112,7 +138,7 @@ const Index = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+          className="text-center mb-8"
         >
           <h1 className="text-4xl md:text-6xl font-bold mb-4">
             <span className="text-gradient">Rug Roulette</span>
@@ -121,6 +147,8 @@ const Index = () => {
             Bet, spin, win big or get rugged. The ultimate Solana gambling experience.
           </p>
         </motion.div>
+
+        <LiveStats />
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           <div className="md:col-span-2 flex flex-col items-center">
@@ -166,15 +194,43 @@ const Index = () => {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3, duration: 0.5 }}
             >
+              <Rewards isWalletConnected={isWalletConnected} />
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+            >
               <WinnersList />
             </motion.div>
           </div>
         </div>
         
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.5 }}
+          >
+            <ReferralSystem />
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+          >
+            <TokenUtility />
+          </motion.div>
+        </div>
+        
+        <MobileAppPromo />
+        
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
+          transition={{ delay: 0.7, duration: 0.5 }}
           className="mb-16"
         >
           <GameRules />
