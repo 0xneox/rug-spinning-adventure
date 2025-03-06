@@ -1,4 +1,3 @@
-
 import { motion } from 'framer-motion';
 import { useDevice } from '@/hooks/use-device';
 import { ReactNode } from 'react';
@@ -10,6 +9,7 @@ interface AnimatedContainerProps {
   reducedMotion?: boolean;
   type?: 'fade' | 'scale' | 'slide' | 'pop' | 'glow';
   isActive?: boolean;
+  id?: string;
 }
 
 export const AnimatedContainer = ({
@@ -18,14 +18,13 @@ export const AnimatedContainer = ({
   className = '',
   reducedMotion = false,
   type = 'fade',
-  isActive = true
+  isActive = true,
+  id
 }: AnimatedContainerProps) => {
   const { prefersReducedMotion, perfTier } = useDevice();
   
-  // Skip animations for users who prefer reduced motion or on low-end devices
   const shouldReduceMotion = prefersReducedMotion || reducedMotion || perfTier === 'low';
   
-  // Animation variants based on type
   const variants = {
     fade: {
       hidden: { opacity: 0, y: 10 },
@@ -52,9 +51,8 @@ export const AnimatedContainer = ({
     }
   };
   
-  // Skip animations if requested
   if (shouldReduceMotion) {
-    return <div className={className}>{children}</div>;
+    return <div className={className} id={id}>{children}</div>;
   }
   
   return (
@@ -68,6 +66,7 @@ export const AnimatedContainer = ({
         ease: type === 'pop' ? 'backOut' : 'easeOut'
       }}
       className={className}
+      id={id}
     >
       {children}
     </motion.div>
@@ -77,12 +76,10 @@ export const AnimatedContainer = ({
 export const FloatingParticles = ({ count = 10, color = 'gold', className = '' }) => {
   const { prefersReducedMotion, perfTier } = useDevice();
   
-  // Skip particles for users who prefer reduced motion or on low-end devices
   if (prefersReducedMotion || perfTier === 'low') {
     return null;
   }
   
-  // Optimize particle count based on performance
   const particleCount = perfTier === 'ultra' ? count : 
                         perfTier === 'high' ? Math.floor(count * 0.7) : 
                         Math.floor(count * 0.4);
@@ -140,7 +137,6 @@ export const PulseAnimation = ({ children, className = '', intensity = 'medium' 
     return <div className={className}>{children}</div>;
   }
   
-  // Different intensities for different use cases
   const pulseConfig = {
     light: {
       scale: [1, 1.02, 1],
