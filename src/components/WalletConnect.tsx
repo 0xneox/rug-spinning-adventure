@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { toast } from 'sonner';
+import { useTheme } from '@/providers/ThemeProvider';
 
 // This would be replaced with actual wallet adapter
 const MOCK_ADDRESS = "Gw6ntSQA...2N7Cgqn";
@@ -12,9 +13,11 @@ const WalletConnect = () => {
   const [loading, setLoading] = useState(false);
   const [walletBalance, setWalletBalance] = useState("0.0");
   const [rugTokenBalance, setRugTokenBalance] = useState("0");
+  const { triggerHaptic } = useTheme();
 
   const handleConnectWallet = () => {
     setLoading(true);
+    triggerHaptic('medium');
     
     // This simulates wallet connection - would be replaced with actual wallet adapter
     setTimeout(() => {
@@ -39,6 +42,7 @@ const WalletConnect = () => {
   };
 
   const handleDisconnect = () => {
+    triggerHaptic('medium');
     setConnected(false);
     setWalletBalance("0.0");
     setRugTokenBalance("0");
@@ -51,6 +55,11 @@ const WalletConnect = () => {
     toast.info("Wallet disconnected");
   };
 
+  const handleBuyTokens = () => {
+    triggerHaptic('light');
+    window.open("https://pump.fun/token/rug", "_blank");
+  };
+
   // In a real implementation, we would add a useEffect to listen for wallet changes
 
   if (connected) {
@@ -60,10 +69,12 @@ const WalletConnect = () => {
           <Button 
             variant="outline" 
             className="px-4 py-2 h-10 bg-secondary/40 border border-white/10 backdrop-blur-sm hover:bg-secondary/60 transition-all"
+            onClick={() => triggerHaptic('light')}
           >
             <div className="flex items-center">
               <div className="h-2 w-2 rounded-full bg-green-500 mr-2 pulse-subtle"></div>
-              <span className="mr-2">{MOCK_ADDRESS}</span>
+              <span className="mr-2 hidden md:inline">{MOCK_ADDRESS}</span>
+              <span className="mr-2 md:hidden">Connected</span>
               <span className="text-roulette-gold font-medium">{walletBalance} SOL</span>
             </div>
           </Button>
@@ -89,7 +100,7 @@ const WalletConnect = () => {
                 variant="outline" 
                 size="sm"
                 className="mt-2 text-green-400 hover:text-green-300 border-green-500/20 hover:border-green-500/30 hover:bg-green-500/5"
-                onClick={() => window.open("https://pump.fun/token/rug", "_blank")}
+                onClick={handleBuyTokens}
               >
                 Buy RUG Tokens
               </Button>

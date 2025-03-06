@@ -2,13 +2,16 @@
 import { useState, useEffect, useRef } from 'react';
 import WalletConnect from './WalletConnect';
 import { motion, useAnimation } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useTheme } from '@/providers/ThemeProvider';
+import { Sparkles, Settings } from 'lucide-react';
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [activeLink, setActiveLink] = useState<string | null>(null);
   const headerRef = useRef<HTMLElement>(null);
   const controls = useAnimation();
+  const { triggerHaptic } = useTheme();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -83,71 +86,73 @@ const Header = () => {
           whileHover={{ scale: 1.03 }}
           transition={{ type: "spring", stiffness: 400, damping: 10 }}
         >
-          <div className="relative h-9 w-9 animate-float perspective-1000 preserve-3d">
-            <motion.div 
-              className="absolute inset-0 rounded-full bg-roulette-gold opacity-20 blur-lg"
+          <Link to="/" className="flex items-center" onClick={() => triggerHaptic('light')}>
+            <div className="relative h-9 w-9 animate-float perspective-1000 preserve-3d">
+              <motion.div 
+                className="absolute inset-0 rounded-full bg-roulette-gold opacity-20 blur-lg"
+                animate={{ 
+                  scale: [1, 1.2, 1],
+                  opacity: [0.2, 0.3, 0.2]
+                }}
+                transition={{ 
+                  duration: 3,
+                  repeat: Infinity,
+                  repeatType: "reverse"
+                }}
+              />
+              
+              <motion.div 
+                className="relative h-9 w-9 rounded-full border-2 border-roulette-gold flex items-center justify-center preserve-3d"
+                whileHover={{ 
+                  rotateY: 180,
+                  transition: { duration: 0.8 }
+                }}
+                style={{ transformStyle: 'preserve-3d' }}
+              >
+                <motion.span 
+                  className="absolute text-roulette-gold font-bold text-xs"
+                  style={{ backfaceVisibility: 'hidden' }}
+                >
+                  RR
+                </motion.span>
+                <motion.span 
+                  className="absolute text-roulette-gold font-bold text-xs"
+                  style={{ 
+                    transform: 'rotateY(180deg)',
+                    backfaceVisibility: 'hidden'
+                  }}
+                >
+                  2025
+                </motion.span>
+              </motion.div>
+            </div>
+            
+            <motion.h1 
+              className="ml-3 text-xl font-bold text-gradient-premium"
               animate={{ 
-                scale: [1, 1.2, 1],
-                opacity: [0.2, 0.3, 0.2]
+                textShadow: ['0 0 8px rgba(212, 175, 55, 0)', '0 0 12px rgba(212, 175, 55, 0.3)', '0 0 8px rgba(212, 175, 55, 0)']
               }}
               transition={{ 
                 duration: 3,
                 repeat: Infinity,
-                repeatType: "reverse"
+                repeatType: "loop"
               }}
-            />
-            
-            <motion.div 
-              className="relative h-9 w-9 rounded-full border-2 border-roulette-gold flex items-center justify-center preserve-3d"
-              whileHover={{ 
-                rotateY: 180,
-                transition: { duration: 0.8 }
-              }}
-              style={{ transformStyle: 'preserve-3d' }}
             >
+              Rug Roulette
               <motion.span 
-                className="absolute text-roulette-gold font-bold text-xs"
-                style={{ backfaceVisibility: 'hidden' }}
-              >
-                RR
-              </motion.span>
-              <motion.span 
-                className="absolute text-roulette-gold font-bold text-xs"
-                style={{ 
-                  transform: 'rotateY(180deg)',
-                  backfaceVisibility: 'hidden'
+                className="inline-block ml-1.5"
+                animate={{
+                  y: [0, -2, 0]
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity
                 }}
               >
-                2025
+                <Sparkles className="h-3.5 w-3.5 text-roulette-gold" />
               </motion.span>
-            </motion.div>
-          </div>
-          
-          <motion.h1 
-            className="ml-3 text-xl font-bold text-gradient-premium"
-            animate={{ 
-              textShadow: ['0 0 8px rgba(212, 175, 55, 0)', '0 0 12px rgba(212, 175, 55, 0.3)', '0 0 8px rgba(212, 175, 55, 0)']
-            }}
-            transition={{ 
-              duration: 3,
-              repeat: Infinity,
-              repeatType: "loop"
-            }}
-          >
-            Rug Roulette
-            <motion.span 
-              className="inline-block ml-1.5"
-              animate={{
-                y: [0, -2, 0]
-              }}
-              transition={{
-                duration: 1.5,
-                repeat: Infinity
-              }}
-            >
-              <Sparkles className="h-3.5 w-3.5 text-roulette-gold" />
-            </motion.span>
-          </motion.h1>
+            </motion.h1>
+          </Link>
         </motion.div>
         
         <div className="flex items-center gap-4">
@@ -164,6 +169,7 @@ const Header = () => {
                 onHoverStart={() => setActiveLink(item.name)}
                 onHoverEnd={() => setActiveLink(null)}
                 whileHover={{ y: -2 }}
+                onClick={() => triggerHaptic('light')}
               >
                 <span className={`relative z-10 transition-colors duration-300 ${
                   activeLink === item.name ? 'text-roulette-gold' : 'hover:text-roulette-gold'
@@ -183,6 +189,11 @@ const Header = () => {
               </motion.a>
             ))}
           </nav>
+          
+          <Link to="/settings" className="relative p-2 hover:text-roulette-gold transition-colors" onClick={() => triggerHaptic('light')}>
+            <Settings className="h-5 w-5" />
+          </Link>
+          
           <WalletConnect />
         </div>
       </div>

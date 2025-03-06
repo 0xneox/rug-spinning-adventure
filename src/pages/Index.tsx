@@ -13,6 +13,8 @@ import LiveStats from '../components/LiveStats';
 import MobileAppPromo from '../components/MobileAppPromo';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
+import { useTheme } from '@/providers/ThemeProvider';
+import { useDevice } from '@/hooks/use-device';
 
 const Index = () => {
   const [pot, setPot] = useState(1.2);
@@ -20,6 +22,10 @@ const Index = () => {
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [timeToNextSpin, setTimeToNextSpin] = useState(60);
   const [showJackpot, setShowJackpot] = useState(false);
+  const { triggerHaptic } = useTheme();
+  const { type: deviceType } = useDevice();
+  
+  const isMobile = deviceType === 'mobile';
   
   // Mock function to check wallet connection
   useEffect(() => {
@@ -79,6 +85,8 @@ const Index = () => {
   
   // Handle bet
   const handleBet = () => {
+    triggerHaptic('medium');
+    
     if (!isWalletConnected) {
       toast.error("Please connect your wallet first");
       return;
@@ -106,10 +114,12 @@ const Index = () => {
     if (result === 0) {
       // Rug pull - you lose
       toast.error("RUG PULL! Better luck next time...");
+      triggerHaptic('heavy');
     } else if (result === 3) {
       // Jackpot
       toast.success("JACKPOT! You won the entire pot + 1000 RUG tokens!");
       setShowJackpot(true);
+      triggerHaptic('heavy');
       
       // Reset pot after a short delay
       setTimeout(() => {
@@ -120,6 +130,7 @@ const Index = () => {
       // Regular win
       const multiplier = result === 1 || result === 4 ? 1.5 : 2;
       toast.success(`You won ${multiplier}x your bet!`);
+      triggerHaptic('medium');
     }
     
     // Reset spinning state and timer
