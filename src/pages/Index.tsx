@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback, useMemo, Suspense } from 'react';
 import Header from '../components/Header';
 import RouletteWheel from '../components/RouletteWheel';
@@ -34,30 +33,24 @@ const Index = () => {
   const isMobile = deviceType === 'mobile';
   const isLowPerformance = perfTier === 'low';
   
-  // Optimistic update for bets
   const betUpdate = useOptimisticUpdate<{ success: boolean, newPot: number }>({
     successMessage: "Bet placed successfully!",
     errorMessage: "Failed to place bet. Please try again."
   });
   
-  // Mock function to check wallet connection
   useEffect(() => {
-    // This simulates checking if wallet is connected
     const checkWallet = () => {
-      // For demo purposes, we'll just assume wallet isn't connected initially
       setIsWalletConnected(false);
     };
     
     checkWallet();
     
-    // Listen for wallet connection changes
     const handleWalletConnection = (event: CustomEvent) => {
       if (event.detail && event.detail.connected !== undefined) {
         setIsWalletConnected(event.detail.connected);
       }
     };
     
-    // This is a mock event. In a real app, this would come from your wallet adapter
     window.addEventListener('walletConnectionChanged' as any, handleWalletConnection);
     
     return () => {
@@ -65,7 +58,6 @@ const Index = () => {
     };
   }, []);
   
-  // Countdown timer for the next spin
   useEffect(() => {
     if (isSpinning) return;
     
@@ -73,7 +65,6 @@ const Index = () => {
       setTimeToNextSpin((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          // Auto-spin when timer reaches 0
           setIsSpinning(true);
           return 0;
         }
@@ -83,21 +74,18 @@ const Index = () => {
     
     return () => clearInterval(timer);
   }, [isSpinning]);
-
-  // Check for referral when component mounts
+  
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const refCode = params.get('ref');
     
     if (refCode) {
-      // Store referral info in local storage
       localStorage.setItem('referredBy', refCode);
       toast.success(`Referral detected! You'll get a free spin after your first bet.`);
     }
   }, []);
   
-  // Handle bet with optimistic updates
-  const handleBet = useCallback(async () => {
+  const handleBet = useCallback(async (betAmount: number) => {
     triggerHaptic('medium');
     
     if (!isWalletConnected) {
@@ -105,33 +93,30 @@ const Index = () => {
       return;
     }
     
-    // Optimistically update the pot
+    const fee = betAmount * 0.05;
+    const netBetAmount = betAmount - fee;
+    
     const currentPot = pot;
-    const optimisticNewPot = pot + 0.095; // Adding 0.1 SOL minus 5% fee
+    const optimisticNewPot = pot + netBetAmount;
     
     try {
-      // In a real app, this would be a blockchain transaction
       await betUpdate.execute(
-        // Mock promise that would be a real transaction in production
         new Promise((resolve, reject) => {
           setTimeout(() => {
-            if (Math.random() > 0.1) { // 90% success rate for demo
+            if (Math.random() > 0.1) {
               resolve({ success: true, newPot: optimisticNewPot });
             } else {
               reject(new Error("Transaction failed"));
             }
           }, 2000);
         }),
-        // Optimistic data shown while waiting
         { success: true, newPot: optimisticNewPot }
       );
       
-      // Update the pot state only if the transaction was successful
       if (betUpdate.isSuccess && betUpdate.data) {
         setPot(betUpdate.data.newPot);
       }
 
-      // Check if user is placing their first bet and was referred
       const isFirstBet = !localStorage.getItem('firstBetPlaced');
       const referredBy = localStorage.getItem('referredBy');
       
@@ -140,44 +125,35 @@ const Index = () => {
         localStorage.setItem('firstBetPlaced', 'true');
       }
     } catch (error) {
-      // Error handling is done by the useOptimisticUpdate hook
       console.error("Betting error:", error);
     }
   }, [pot, isWalletConnected, triggerHaptic, betUpdate]);
   
-  // Handle spin completion
   const handleSpinComplete = useCallback((result: number) => {
-    // Process the result
     if (result === 0) {
-      // Rug pull - you lose
       toast.error("RUG PULL! Better luck next time...");
       triggerHaptic('heavy');
     } else if (result === 3) {
-      // Jackpot
       toast.success("JACKPOT! You won the entire pot + 1000 RUG tokens!");
       setShowJackpot(true);
       triggerHaptic('heavy');
       
-      // Reset pot after a short delay
       setTimeout(() => {
         setPot(0);
         setShowJackpot(false);
       }, 5000);
     } else {
-      // Regular win
       const multiplier = result === 1 || result === 4 ? 1.5 : 2;
       toast.success(`You won ${multiplier}x your bet!`);
       triggerHaptic('medium');
     }
     
-    // Reset spinning state and timer
     setTimeout(() => {
       setIsSpinning(false);
       setTimeToNextSpin(60);
     }, 3000);
   }, [triggerHaptic]);
   
-  // Memoize content sections to prevent unnecessary re-renders
   const MainContent = useMemo(() => (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
       <div className="md:col-span-2 flex flex-col items-center">
@@ -269,7 +245,6 @@ const Index = () => {
           </p>
         </AnimatedContainer>
 
-        {/* Network status alert */}
         <AnimatePresence>
           {!isOnline && (
             <AnimatedContainer type="fade" className="mb-6">
