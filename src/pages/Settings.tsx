@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import Header from '@/components/Header';
 import { useTheme } from '@/providers/ThemeProvider';
@@ -7,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Moon, Sun, Palette, CircleDashed, 
   Vibrate, SlidersHorizontal, MonitorSmartphone, 
-  Sparkles, TextSize
+  Sparkles, Type
 } from 'lucide-react';
 import { 
   Tabs, 

@@ -75,10 +75,16 @@ export function useDevice(): DeviceInfo {
         else perfTier = 'ultra';
       }
       
-      // XR detection (VR/AR)
-      // @ts-ignore
-      const isVR = 'xr' in navigator && navigator.xr ? true : false;
-      const isAR = isVR && 'isSessionSupported' in navigator.xr;
+      // XR detection (VR/AR) - Fixed to avoid TypeScript errors
+      const isVR = typeof window !== 'undefined' && 
+                  'xr' in navigator && 
+                  // @ts-ignore - navigator.xr exists in modern browsers but may not be in TS types
+                  navigator.xr !== undefined;
+      
+      // AR support check
+      const isAR = isVR && 
+                  // @ts-ignore - WebXR spec exists but may not be in TS types
+                  'isSessionSupported' in (navigator.xr || {});
       
       setDeviceInfo({
         type,
